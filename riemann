@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Riemann Sum and Integral Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <script>
+        function calculate() {
+            const func = document.getElementById("func").value;
+            const lower = parseFloat(document.getElementById("lower").value);
+            const upper = parseFloat(document.getElementById("upper").value);
+            const intervals = parseInt(document.getElementById("intervals").value);
+            const method = document.getElementById("method").value;
+            const resultElement = document.getElementById("result");
+
+            try {
+                if (method === "riemannSum") {
+                    const sum = riemannSum(func, lower, upper, intervals);
+                    resultElement.textContent = `Riemann Sum: ${sum}`;
+                } else if (method === "riemannIntegral") {
+                    const integral = riemannIntegral(func, lower, upper, intervals);
+                    resultElement.textContent = `Riemann Integral (Trapezoidal Rule): ${integral}`;
+                } else {
+                    resultElement.textContent = "Please select a method.";
+                }
+            } catch (error) {
+                resultElement.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        function riemannSum(func, lower, upper, intervals) {
+            const deltaX = (upper - lower) / intervals;
+            let sum = 0;
+
+            for (let i = 0; i < intervals; i++) {
+                const x = lower + i * deltaX; // Left Riemann sum
+                const y = math.evaluate(func, { x: x });
+                sum += y * deltaX;
+            }
+            return sum;
+        }
+
+        function riemannIntegral(func, lower, upper, intervals) {
+            const deltaX = (upper - lower) / intervals;
+            let sum = 0;
+
+            for (let i = 0; i < intervals; i++) {
+                const x1 = lower + i * deltaX;
+                const x2 = lower + (i + 1) * deltaX;
+                const y1 = math.evaluate(func, { x: x1 });
+                const y2 = math.evaluate(func, { x: x2 });
+                sum += (y1 + y2) * deltaX / 2; // Trapezoidal rule
+            }
+            return sum;
+        }
+    </script>
+</head>
+<body>
+    <h1>Riemann Sum and Integral Calculator</h1>
+    <label for="func">Function (e.g., x^2, sin(x)):</label>
+    <input type="text" id="func" value="x^2"><br><br>
+
+    <label for="lower">Lower Limit:</label>
+    <input type="text" id="lower" value="0"><br><br>
+
+    <label for="upper">Upper Limit:</label>
+    <input type="text" id="upper" value="2"><br><br>
+
+    <label for="intervals">Number of Intervals:</label>
+    <input type="text" id="intervals" value="100"><br><br>
+
+    <label for="method">Method:</label>
+    <select id="method">
+        <option value="">Select Method</option>
+        <option value="riemannSum">Riemann Sum (Left)</option>
+        <option value="riemannIntegral">Riemann Integral (Trapezoidal)</option>
+    </select><br><br>
+
+    <button onclick="calculate()">Calculate</button><br><br>
+
+    <p id="result"></p>
+</body>
+</html>
